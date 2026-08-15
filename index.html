@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD_TAG: swo2026_30venue_ver1.4w / 2026-08-15 -->
+<!-- BUILD_TAG: swo2026_30venue_ver1.5w / 2026-08-15 -->
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -893,6 +893,15 @@ footer{border-top:0;}
   .doc-page-last .doc-wakachi{margin:1px 0 3px!important;}
   .doc-page-last .doc-order-note{margin:8px 0 0!important;}
   .doc-page-last .doc-from{margin-top:8px!important;padding:7px 12px!important;font-size:9pt!important;line-height:1.5!important;}
+}
+/* ===== スマホ画面での帳票表示（印刷には影響しない） =====
+   ４列の帳票テーブルは幅340px程度に収まらないため、
+   帳票に最低幅を持たせ、モーダル内で横スクロールして閲覧する。 */
+@media screen and (max-width:640px){
+  body.doc-open .modal-bd{overflow-x:auto!important;-webkit-overflow-scrolling:touch;}
+  body.doc-open .doc{min-width:560px;}
+  body.doc-open .doc table{table-layout:auto!important;}
+  body.doc-open .doc table th,body.doc-open .doc table td{word-break:normal;overflow-wrap:break-word;}
 }
 </style>
 </head>
