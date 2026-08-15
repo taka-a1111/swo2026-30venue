@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD_TAG: swo2026_30venue_ver1.1w / 2026-08-14 -->
+<!-- BUILD_TAG: swo2026_30venue_ver1.4w / 2026-08-15 -->
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -366,6 +366,9 @@ section:nth-of-type(even){background:var(--bg);}
 .doc .doc-note-sub li:before{content:"・";}
 .doc .doc-note-sub li.no-mark:before{content:"";}
 .doc .doc-order-note{margin:14px 0 0;}
+.doc .doc-wakachi{margin:2px 0 4px;}
+.doc .doc-wakachi li{line-height:1.5;}
+.doc .doc-wakachi-note{margin:0 0 4px;font-size:12px;}
 .doc .doc-note-items li{display:flex;flex-wrap:wrap;gap:2px 10px;padding:3px 0;border-bottom:1px dotted #ddd;font-size:10.5pt;}
 .doc .doc-note-items li:last-child{border-bottom:0;}
 .doc .ni-n{flex:0 0 30%;font-weight:700;}
@@ -879,6 +882,18 @@ footer{border-top:0;}
 .doc-spec .mbtn{width:100%;}
 .docs-note{font-size:12.5px;color:#555;margin-top:18px;line-height:1.9;}
 @media(max-width:760px){.doc-spec-grid{grid-template-columns:1fr;}}
+/* ===== 発注書3ページ目の印刷圧縮（末尾に置いて優先） ===== */
+@media print{
+  .doc-page-last .doc-sec-ttl{margin:6px 0 4px!important;padding:3px 10px!important;font-size:10.5pt!important;}
+  .doc-page-last .opt-list th,.doc-page-last .opt-list td{padding:3px 8px!important;font-size:9pt!important;}
+  .doc-page-last table{margin-bottom:6px!important;}
+  .doc-page-last p{margin:3px 0 5px!important;font-size:9.5pt!important;}
+  .doc-page-last .doc-note-sub{font-size:9pt!important;}
+  .doc-page-last .doc-wakachi li{line-height:1.4!important;}
+  .doc-page-last .doc-wakachi{margin:1px 0 3px!important;}
+  .doc-page-last .doc-order-note{margin:8px 0 0!important;}
+  .doc-page-last .doc-from{margin-top:8px!important;padding:7px 12px!important;font-size:9pt!important;line-height:1.5!important;}
+}
 </style>
 </head>
 <body>
@@ -1091,7 +1106,7 @@ footer{border-top:0;}
 "use strict";
 
 /* ====== 設定：商品プランと希望項目（変更はここだけ） ====== */
-var SEND_TO = "swo-order30@science-web.online";
+var SEND_TO = "swo-order-form@science-web.online";
 /* 発注データの保存・通知先（Google Apps Script ウェブアプリ）
    ここに、デプロイ後の実際のURLを設定してください。未設定のままだと発注書は送信できません。 */
 var GAS_WEB_APP_URL = "GAS_URL_HERE";  /* 30万円版のデプロイURLを設定してください */
@@ -1195,7 +1210,7 @@ var MAILTO = {
   zoom   : "swo-zoom@science-web.online",
   kihon  : "swo-kihon@science-web.online",
   saiteki: "swo-saiteki@science-web.online",
-  order  : "swo-order30@science-web.online"
+  order  : "swo-order-form@science-web.online"
 };
 
 /* ====== ユーティリティ ====== */
@@ -1502,7 +1517,9 @@ $("od-next").addEventListener("click", function(){
     + '<div class="doc-sec-ttl">希望項目</div>'
     + optLines
     + '<table style="margin-top:10px;">'
-    + '<tr><th style="width:34%">合計金額（税込）</th><td class="r"><b>'+yen(total)+'</b></td></tr>'
+    + '<tr><th style="width:34%">小計（税抜）</th><td class="r">'+yen(sub)+'</td></tr>'
+    + '<tr><th>消費税（10％）</th><td class="r">'+yen(tax)+'</td></tr>'
+    + '<tr><th>合計金額（税込）</th><td class="r"><b>'+yen(total)+'</b></td></tr>'
     + '</table>'
     /* ※１ページ目にフッター（注意書き＋会社署名の末尾ブロック）は入れない（08.14 追加修正）。
        原稿docxでは注意書きと署名が同一セルの一体ブロックのため、両方を削除。
@@ -1527,17 +1544,36 @@ $("od-next").addEventListener("click", function(){
     + '</div>'
 
     /* 3ページ目 */
-    + '<div class="doc doc-page">'
+    + '<div class="doc doc-page doc-page-last">'
     + '<h3 class="doc-ttl">ご確認事項</h3>'
     + '<p class="doc-date">発注番号　'+esc(no)+'　（3／3）</p>'
     + '<div class="doc-sec-ttl">納期</div>'
     + '<p>入稿完了から３週間以内に公開いたします。</p>'
     + '<div class="doc-sec-ttl">パック商品に含まれないもの</div>'
-    + '<p>消費税10％は別途申し受けます。保守管理の業務契約、運用代行の業務契約、カード決済手数料などは希望項目としてお申し込みください。</p>'
+    + '<p>消費税10％は別途申し受けます。下記６項目は、パック商品に含まれておりません。</p>'
+    + notIncludedList()
     + '<div class="doc-sec-ttl">保守管理の業務</div>'
-    + '<p>サーバー・ドメイン管理（月1回まで）、ＳＳＬ証明書の更新（年1回まで）、サーバーバックアップ（月２回まで）、障害対応（月２件まで）、運用とセキュリティ助言（月２回まで・各1時間以内）。機器の購入・修理・設置、データ入力、大規模リニューアル、構造変更、コンテンツ制作、ＳＥＯ実施、アクセス解析は含みません。</p>'
+    + '<ul class="doc-note-sub doc-wakachi">'
+    + '<li>サーバー・ドメイン管理（月１回まで）</li>'
+    + '<li>ＳＳＬ証明書の更新（年１回まで）</li>'
+    + '<li>サーバーバックアップ（月２回まで）</li>'
+    + '<li>障害対応（月２件まで）</li>'
+    + '<li>運用とセキュリティ助言（月２回まで・各１時間以内）</li>'
+    + '</ul>'
+    + '<p class="doc-wakachi-note">次の作業は含みません。</p>'
+    + '<ul class="doc-note-sub doc-wakachi">'
+    + '<li>機器の購入・修理・設置</li>'
+    + '<li>データ入力</li>'
+    + '<li>大規模リニューアル、構造変更</li>'
+    + '<li>コンテンツ制作、ＳＥＯ実施、アクセス解析</li>'
+    + '</ul>'
     + '<div class="doc-sec-ttl">運用代行の業務</div>'
-    + '<p>テキスト修正（400字以内）、画像差替え（２点以内）、リンク修正（３点以内）を、いずれも月５回までお請けします。構成変更、ページ追加、デザイン変更は別途お見積りいたします。</p>'
+    + '<ul class="doc-note-sub doc-wakachi">'
+    + '<li>テキスト修正（400字以内）</li>'
+    + '<li>画像差替え（２点以内）</li>'
+    + '<li>リンク修正（３点以内）</li>'
+    + '</ul>'
+    + '<p class="doc-wakachi-note">いずれも月５回までお請けします。<br>構成変更、ページ追加、デザイン変更は別途お見積りいたします。</p>'
     + '<div class="doc-sec-ttl">お問合せ</div>'
     + '<p>ＴＥＬ　'+esc(COMPANY.tel)+'（平日10時〜16時）　／　メール　'+esc(COMPANY.mail)+'　／　フロント　'+esc(COMPANY.front)+'</p>'
     + fromBlock()
