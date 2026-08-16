@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD_TAG: swo2026_30venue_ver1.5w / 2026-08-15 -->
+<!-- BUILD_TAG: swo2026_30venue_ver1.8w / 2026-08-16 -->
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -898,10 +898,14 @@ footer{border-top:0;}
    ４列の帳票テーブルは幅340px程度に収まらないため、
    帳票に最低幅を持たせ、モーダル内で横スクロールして閲覧する。 */
 @media screen and (max-width:640px){
-  body.doc-open .modal-bd{overflow-x:auto!important;-webkit-overflow-scrolling:touch;}
-  body.doc-open .doc{min-width:560px;}
+  /* 帳票はＡ４相当の560px幅で組み、画面幅に合わせてＪＳで縮小表示する（ＰＤＦプレビューと同じ見え方） */
+  body.doc-open .modal-bd{overflow-x:hidden!important;}
+  body.doc-open .doc{width:560px;min-width:560px;}
   body.doc-open .doc table{table-layout:auto!important;}
   body.doc-open .doc table th,body.doc-open .doc table td{word-break:normal;overflow-wrap:break-word;}
+}
+@media print{
+  .doc{zoom:1!important;}  /* 縮小表示は画面のみ。印刷は等倍 */
 }
 </style>
 </head>
@@ -930,7 +934,7 @@ footer{border-top:0;}
        <button data-open="m-ref">最適見積書</button>
        <button data-open="m-order">発注書</button>
      =================================================================== -->
-<main>
+<main id="top">
 <section id="docs" aria-labelledby="sec-docs">
   <div class="wrap">
     <h2 class="sec-ttl" id="sec-docs">会計書類３点セット</h2>
@@ -1371,7 +1375,7 @@ $("bs-make").addEventListener("click", function(){
     + '</table>'
     + noteBlock(NOTE_BASIC, true, NOTE_BASIC_SUB)
     + fromBlock()
-    + '</div>';
+    + '</div>'; fitDocs();
 
   $("bs-form").style.display="none";
   $("bs-doc").style.display="block";
@@ -1435,7 +1439,7 @@ $("rf-make").addEventListener("click", function(){
     + '</table>'
     + noteBlock(NOTE_OPT, false, NOTE_OPT_SUB)
     + fromBlock()
-    + '</div>';
+    + '</div>'; fitDocs();
 
   $("rf-form").style.display="none";
   $("rf-doc").style.display="block";
@@ -1593,6 +1597,7 @@ $("od-next").addEventListener("click", function(){
   $("od-done").style.display="none";
   setStep($("od-steps"),1);
   show("od-back",1); show("od-send",1); show("od-next",0); show("od-print",0);
+  fitDocs();
 
   LAST = {no:no, org:org, nm:nm, ml:ml, memo:memo, plan:p, sub:sub, tax:tax, total:total, optNames:optNames};
 });
@@ -1671,12 +1676,31 @@ $("od-send").addEventListener("click", function(){
   });
 });
 
+/* ====== 帳票のスマホ縮小表示 ====== */
+function fitDocs(){
+  var w = window.innerWidth || document.documentElement.clientWidth;
+  var docs = document.querySelectorAll(".modal.open .doc");
+  for(var i=0;i<docs.length;i++){
+    if(w<=640){
+      var bd = docs[i].closest ? docs[i].closest(".modal-bd") : null;
+      var avail = (bd ? bd.clientWidth : w) - 8;
+      var z = avail/560;
+      docs[i].style.zoom = (z<1 ? z : 1);
+    } else {
+      docs[i].style.zoom = "";
+    }
+  }
+}
+window.addEventListener("resize", fitDocs);
+window.addEventListener("orientationchange", fitDocs);
+
 /* ====== モーダル開閉 ====== */
 function openModal(id, planIndex){
   var m=$(id);
   if(!m) return;
   m.className="modal open";
   document.body.style.overflow="hidden";
+  setTimeout(fitDocs, 0);
   /* 帳票を開いている間は、印刷時にその帳票だけを出す */
   document.body.className = (document.body.className.replace(/\s*doc-open/g,"") + " doc-open").replace(/^\s+/,"");
   if(planIndex!=null && planIndex!==""){
