@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD_TAG: swo2026_30venue_ver1.9w / 2026-08-16 -->
+<!-- BUILD_TAG: swo2026_30venue_ver2.0w / 2026-08-16 -->
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -1122,7 +1122,7 @@ footer{border-top:0;}
 var SEND_TO = "swo-order-form@science-web.online";
 /* 発注データの保存・通知先（Google Apps Script ウェブアプリ）
    ここに、デプロイ後の実際のURLを設定してください。未設定のままだと発注書は送信できません。 */
-var GAS_WEB_APP_URL = "GAS_URL_HERE";  /* 30万円版のデプロイURLを設定してください */
+var GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzzeiEymQY1dwFYONoiMNLFOihUswxB5X0SBNdHuyD793LqCGF0JaD1ST7q9je0h2mQ/exec";  /* 30万円版のデプロイURLを設定してください */
 
 /* 商品プランの説明は帳票ごとに原稿の表記が異なるため、書類別に持つ
    desc      … 画面表示・発注書（原稿どおり）
@@ -1638,14 +1638,19 @@ $("od-send").addEventListener("click", function(){
     method: "POST",
     headers: {"Content-Type":"text/plain;charset=utf-8"}, // Apps Script側の制約でtext/plainで送る
     body: JSON.stringify({
+      product: "ＳＷＯ２０２６ＬＰ改訂30万円",
       docNo: no,
       org: org,
       name: nm,
       email: ml,
       planName: p.name,
       options: optNames,
+      subtotal: sub,
+      tax: tax,
+      totalNum: total,
       total: yen(total),
-      memo: memo || ""
+      memo: memo || "",
+      docHtml: $("od-doc").innerHTML
     })
   })
   .then(function(res){ return res.json(); })
