@@ -346,6 +346,8 @@ table.biz-tbl th.biz-cat{color:var(--ink);}
   .hero-consult{font-size:21px;}
   .plan-lead{font-size:19px;}
   .answer-box .answer-ttl,.answer-box .answer-sub{font-size:19px;}
+  /* 30万円だけにある業務内容のスマホ用指定（区分の上の余白・角丸）を、40万円と同じ見た目に戻す */
+  table.biz-tbl th.biz-cat{margin-top:0;border-radius:0;background:#e3e6ea;}
 }
 /* ===== 10月修正：ここまで ===== */
 '''
