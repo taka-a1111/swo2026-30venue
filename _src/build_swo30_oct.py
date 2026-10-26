@@ -77,7 +77,7 @@ rep('''        <img src="images/laptop.png" alt="ノートPC操作の様子" cla
         <img src="images/abstract-entry.jpg" alt="学会の演題登録フォームに要旨を入力する女性">
         <img src="images/card-payment.jpg" alt="スマートフォンで参加登録とカード決済を行う様子">''')
 rep('<p>ＣＭＳ、スマートフォン対応、ＳＥＯ、アクセス解析まで対応。<br>学会・大学・研究機関向けのWebサイト・システムを、2007年からサポートしてきました。<br>大会の規模や開催時期が決まっていない段階でもご相談いただけます。</p>\n    ' + OLD_BTN2,
-    '<ul class="hero-points">\n        <li>・既存の大会ホームページに登録フォームを導入</li>\n        <li>・演題・参加登録の条件に合わせて項目を設定</li>\n      </ul>\n      <p class="hero-note">大会の規模や開催時期が決まっていなくても、ご相談いただけます。</p>\n    ' + BTN3.replace('margin-top:26px', 'margin-top:20px'))
+    '<ul class="hero-points">\n        <li>・既存の大会ホームページに登録フォームを導入</li>\n        <li>・演題・参加登録の条件に合わせて項目を設定</li>\n      </ul>\n      <p class="hero-consult">大会の規模や開催時期が決まっていなくても、ご相談いただけます。</p>\n    ' + BTN3.replace('margin-top:26px', 'margin-top:20px'))
 
 # ---- ⑧⑨⑩ プランの見出し ----
 rep('<h2 class="sec-ttl">すぐに使える登録受付フォーム</h2>', '<h2 class="sec-ttl" id="sec-price30">30万円プランに含まれる内容</h2>')
@@ -325,11 +325,13 @@ CSS = '''
 /* ⑥ 1・2行目は1.5倍、3行目は2倍 */
 .hero-points{list-style:none;margin:22px 0 0;padding:0;}
 .hero-points li{font-size:24px;font-weight:700;line-height:1.7;color:var(--navy-ink);}
-.hero-note{font-size:32px;font-weight:800;line-height:1.5;margin:10px 0 0;color:var(--navy-ink);}
+.hero-consult{font-size:32px;font-weight:800;line-height:1.5;margin:10px 0 0;color:var(--navy-ink);}
 /* ⑨ 30万円プランに含まれる内容 */
 .plan-points{list-style:none;margin:6px 0 0;padding:0;}
 .plan-points li{font-size:18px;font-weight:700;line-height:1.9;}
 .plan-lead{font-size:22px;font-weight:900;color:var(--navy-ink);margin:26px 0 14px;line-height:1.5;}
+/* 業務内容の区分は40万円と同じ文字色 */
+table.biz-tbl th.biz-cat{color:var(--ink);}
 /* 32・33 1.2倍、同じ大きさ */
 .answer-box .answer-ttl{font-size:24px;}
 .answer-box .answer-sub{font-size:24px;font-weight:700;line-height:1.6;}
@@ -341,7 +343,7 @@ CSS = '''
   .hero-card .p-unit{font-size:28px;}
   .hero-card .hc-msg{font-size:19px;}
   .hero-points li{font-size:17px;}
-  .hero-note{font-size:21px;}
+  .hero-consult{font-size:21px;}
   .plan-lead{font-size:19px;}
   .answer-box .answer-ttl,.answer-box .answer-sub{font-size:19px;}
 }
